@@ -7,11 +7,16 @@ import Contact from "./pages/Contact";
 import MyProfile from "./pages/MyProfile";
 import MyAppointments from "./pages/MyAppointments";
 import Appointments from "./pages/Appointments";
+import Navbar from "./components/Navbar";
 
 
 export default function App() {
   return (
     <div className="mx-4 sm:max-[10%]">
+
+      <Navbar/>
+
+
      <Routes>
       <Route path="/" element={<Home/>} />
       <Route path="/doctors" element={<Doctors/>} />

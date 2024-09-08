@@ -8,6 +8,7 @@ import MyProfile from "./pages/MyProfile";
 import MyAppointments from "./pages/MyAppointments";
 import Appointments from "./pages/Appointments";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 
 export default function App() {
@@ -27,7 +28,9 @@ export default function App() {
       <Route path="/my-profile" element={<MyProfile/>} />
       <Route path="/my-appointments" element={<MyAppointments/>} />
       <Route path="/appointments/:docId" element={<Appointments/>} />
+      
      </Routes>
+     <Footer />
 
     </div>
   )

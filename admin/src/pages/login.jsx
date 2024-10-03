@@ -9,6 +9,11 @@ const Login = () => {
     <form >
       <div>
         <p><span> {state} </span> Login </p>
+        <div>
+           <p>Password</p>
+           <input type="password"  required/>
+        </div>
+         <button>Login</button>
       </div>
     </form>
   )

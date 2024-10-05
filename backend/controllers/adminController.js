@@ -71,18 +71,15 @@ const loginAdmin = async (req, res) => {
 
         // Check for all data to login admin
         if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
-            // Generate admin token with proper payload
-            const payload = { email }; // You can include more data if needed
-            const options = { expiresIn: '1h' }; // Options as a plain object
-            const adminToken = jwt.sign(payload, process.env.JWT_SECRET, options);
             
-            res.json({ success: true, adminToken });
+            const token = jwt.sign(email+password, process.env.JWT_SECRET);
+            res.json({ success: true, token });
         } else {
             res.json({ success: false, message: 'Incorrect Email or Password' });
         }
     } catch (error) {
         console.error(error);
-        res.json({ success: false, message: 'Server Error' });
+        res.json({ success: false, message: error.message });
     }
 };
 

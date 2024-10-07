@@ -28,6 +28,7 @@ app.use('/api/user', userRouter )
 
 
 
+
 //api endpoints
 app.get('/', (req, res)=> {
     res.send('API is running...');

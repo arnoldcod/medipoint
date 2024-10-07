@@ -1,5 +1,7 @@
 import jwt from 'jsonwebtoken';
 
+
+//admin authentication
 const authAdmin = async (req, res, next) => {
   try {
     const { atoken } = req.headers; // Access the token from headers

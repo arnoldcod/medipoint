@@ -1,24 +1,14 @@
 // eslint-disable-next-line no-unused-vars
-import React, { useState } from "react";
-import { assets } from "../assets/assets";
+import React, { useContext, useState } from "react";
+import { AppContext } from "../context/AppContext";
 
 const MyProfile = () => {
-    const [userData, setUserData] = useState({
-        name: "Edward Vincent",
-        image: assets.profile_pic,
-        email: "edwardvincent@gmail.com",
-        phone: "1234567890",
-        address: {
-            line1: "57th Cross, Richmond",
-            line2: "Circle, Ring Road, London",
-        },
-        gender: "Male",
-        dob: "2000-01-20",
-    });
+
+    const {userData, setUserData} = useContext(AppContext)
 
     const [isEdit, setIsEdit] = useState(false);
 
-    return (
+    return userData && (
         <div className="max-w-lg flex flex-col gap-2 text-sm">
             <img className="w-36 rounded" src={userData.image} alt="" />
 

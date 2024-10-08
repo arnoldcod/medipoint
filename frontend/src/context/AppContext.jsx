@@ -55,7 +55,8 @@ const AppContextProvider =(props)=> {
         backendURL,
         userData,
         setUserData,
-        loadUserProfileData
+        loadUserProfileData,
+        getDoctorsData
      }
 
      

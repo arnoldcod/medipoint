@@ -5,8 +5,10 @@ import { AppContext } from '../context/AppContext'
 import { assets } from '../assets/assets'
 import RelatedDoctors from '../components/RelatedDoctors'
 import { toast } from 'react-toastify'
+import axios from 'axios'
 
 const Appointment = () => {
+
 
   const {docId} = useParams ()
   const {doctors, currencySymbol, backendURL, token, getDoctorsData} = useContext( AppContext )
@@ -69,14 +71,40 @@ const Appointment = () => {
   }
 
   const bookAppointment = async () => {
+
     if (!token) {
       toast.warn('Login to book appointment')
       return navigate ('/login')
     }
+
+    try {
+      const date = docSlots[slotIndex][0].datetime
+
+      let day = date.getDate()
+      let month = date.getMonth()+1
+      let year = date.getFullYear()
+
+      const slotDate = day + '-' + month + '-' + year
+
+      const { data } = await axios.post(backendURL + '/api/user/book-appointment', {docId, slotDate, slotTime}, {headers:{token}})
+      if(data.success) {
+        toast.success(data.message)
+        getDoctorsData()
+        navigate('/my-appointments')
+      } else {
+        toast.error(data.message)
+      }
+
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message)
+    }
+
   }
 
   useEffect(() => {
     fetchDocInfo()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doctors, docId])
 
 
@@ -146,7 +174,7 @@ const Appointment = () => {
          <button onClick={bookAppointment} className='bg-primary text-white text-sm font-light px-14 py-3 rounded-full my-6 '>Book an appointment</button>
       </div>
 
-      {/*----listinng related doctors------ */}
+      {/*----listing related doctors------ */}
 
      
        <RelatedDoctors docId={docId} speciality={docInfo.speciality} />

@@ -43,7 +43,7 @@ const validateUserInput = (req, res, next) => {
 };
 
 // Controllers
-export const registerUser = async (req, res) => {
+ const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
@@ -66,7 +66,7 @@ export const registerUser = async (req, res) => {
   }
 };
 
-export const loginUser = async (req, res) => {
+const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await userModel.findOne({ email }).select('+password');
@@ -87,7 +87,7 @@ export const loginUser = async (req, res) => {
   }
 };
 
-export const getProfile = async (req, res) => {
+ const getProfile = async (req, res) => {
   try {
     const { userId } = req.body;
     const userData = await userModel.findById(userId).select('-password');
@@ -102,7 +102,7 @@ export const getProfile = async (req, res) => {
   }
 };
 
-export const updateProfile = async (req, res) => {
+ const updateProfile = async (req, res) => {
   try {
     const { userId, name, phone, address, dob, gender } = req.body;
     const imageFile = req.file;
@@ -142,7 +142,7 @@ export const updateProfile = async (req, res) => {
   }
 };
 
-export const bookAppointment = async (req, res) => {
+ const bookAppointment = async (req, res) => {
   try {
     const { userId, docId, slotDate, slotTime } = req.body;
 
@@ -156,46 +156,44 @@ export const bookAppointment = async (req, res) => {
     }
 
     // Check slot availability
-    const slots_booked = { ...doctor.slots_booked };
-    if (slots_booked[slotDate]?.includes(slotTime)) {
-      return res.status(400).json({ success: false, message: 'Slot is already booked' });
+    if (slots_booked[slotDate]) {
+      if (slots_booked[slotDate].includes(slotTime)) {
+        return res.status(400).json({ success: false, message: 'Slot is already booked' });
+    } else {
+      slots_booked[slotDate].push(slotTime);
     }
-
-    // Update booked slots
-    if (!slots_booked[slotDate]) {
-      slots_booked[slotDate] = [];
-    }
+  } else {
+    slots_booked[slotDate] = [];
     slots_booked[slotDate].push(slotTime);
+  }
 
-    const user = await userModel.findById(userId).select('-password');
-    if (!user) {
-      return res.status(404).json({ success: false, message: 'User not found' });
-    }
-
-    const docDataForAppointment = {
-      ...doctor.toObject(),
-      slots_booked: undefined
-    };
+    const userData = await userModel.findById(userId).select('-password');
+   
+     delete docData.slots_booked
 
     // Create appointment
     const appointmentData = {
       userId,
       docId,
-      userData: user,
-      docData: docDataForAppointment,
+      userData,
+      docData,
       amount: doctor.fees,
       slotDate,
       slotTime,
       date: Date.now(),
     };
 
-    await Promise.all([
-      appointmentModel.create(appointmentData),
-      doctorModel.findByIdAndUpdate(docId, { slots_booked })
-    ]);
+    const newAppointment = new appointmentModel(appointmentData)
+    await newAppointment.save()  // saving appointment to database
+
+    await doctorModel.findByIdAndUpdate(docId, {slots_booked})
+
+    res.json({success:true, message: 'Appointment saved successfully'});
 
     res.json({ success: true, message: 'Appointment booked successfully' });
   } catch (error) {
     handleError(res, error);
   }
 };
+
+export {registerUser, loginUser, getProfile, updateProfile, bookAppointment}

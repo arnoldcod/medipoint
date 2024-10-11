@@ -142,20 +142,23 @@ const loginUser = async (req, res) => {
   }
 };
 
+
+//API to book appointment
+
  const bookAppointment = async (req, res) => {
   try {
     const { userId, docId, slotDate, slotTime } = req.body;
 
-    const doctor = await doctorModel.findById(docId);
-    if (!doctor) {
-      return res.status(404).json({ success: false, message: 'Doctor not found' });
-    }
+    const docData = await doctorModel.findById(docId).select('-password')
 
-    if (!doctor.available) {
+    if (!docData.available) {
       return res.status(400).json({ success: false, message: 'Doctor is not available' });
     }
 
     // Check slot availability
+
+    let slots_booked = docData.slots_booked
+
     if (slots_booked[slotDate]) {
       if (slots_booked[slotDate].includes(slotTime)) {
         return res.status(400).json({ success: false, message: 'Slot is already booked' });
@@ -177,7 +180,7 @@ const loginUser = async (req, res) => {
       docId,
       userData,
       docData,
-      amount: doctor.fees,
+      amount: docData.fees,
       slotDate,
       slotTime,
       date: Date.now(),

@@ -145,7 +145,7 @@ const loginUser = async (req, res) => {
 
 //API to book appointment
 
- const bookAppointment = async (req, res) => {
+const bookAppointment = async (req, res) => {
   try {
     const { userId, docId, slotDate, slotTime } = req.body;
 
@@ -156,23 +156,22 @@ const loginUser = async (req, res) => {
     }
 
     // Check slot availability
-
     let slots_booked = docData.slots_booked
 
     if (slots_booked[slotDate]) {
       if (slots_booked[slotDate].includes(slotTime)) {
         return res.status(400).json({ success: false, message: 'Slot is already booked' });
+      } else {
+        slots_booked[slotDate].push(slotTime);
+      }
     } else {
+      slots_booked[slotDate] = [];
       slots_booked[slotDate].push(slotTime);
     }
-  } else {
-    slots_booked[slotDate] = [];
-    slots_booked[slotDate].push(slotTime);
-  }
 
     const userData = await userModel.findById(userId).select('-password');
    
-     delete docData.slots_booked
+    delete docData.slots_booked
 
     // Create appointment
     const appointmentData = {
@@ -191,11 +190,9 @@ const loginUser = async (req, res) => {
 
     await doctorModel.findByIdAndUpdate(docId, {slots_booked})
 
-    res.json({success:true, message: 'Appointment saved successfully'});
-
-    res.json({ success: true, message: 'Appointment booked successfully' });
+    return res.json({ success: true, message: 'Appointment booked successfully' });
   } catch (error) {
-    handleError(res, error);
+    return handleError(res, error);
   }
 };
 

@@ -5,6 +5,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import userModel from "../models/userModel.js";
 import doctorModel from "../models/doctorModel.js";
 import appointmentModel from "../models/appointmentModel.js"; // Added missing import
+import razorpay from 'razorpay'; // Added missing import
 
 // Constants
 const SALT_ROUNDS = 10;
@@ -244,5 +245,14 @@ const cancelAppointment = async (req, res) => {
     return handleError(res, error);
   }
 }
+
+
+
+//API to make payment of appointment using razorpayment
+const paymentRazorpay = async (req, res) => { 
+
+}
+
+
 
 export {registerUser, loginUser, getProfile, updateProfile, bookAppointment, listAppointment, cancelAppointment}
